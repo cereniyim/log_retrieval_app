@@ -5,8 +5,10 @@ from pymongo import MongoClient
 
 from dummy_log_generator import DummyLogGenerator
 
+
+# TODO move this to scripts
 # MongoDB connection settings
-mongodb_uri = "mongodb://localhost:27017/" # TODO move them to config
+mongodb_uri = "mongodb://localhost:27017/"
 client = MongoClient(mongodb_uri)
 db = client["logs"]
 collection = db["log_collection"]

@@ -1,8 +1,15 @@
+from typing import Optional
+
 from flask import Flask
 from flask_restx import Api, Resource, fields
 from datetime import datetime
 
 from mongodb_gateway import MongoDBGateway, NoResultsFound
+
+
+class DateParseError(Exception):
+    pass
+
 
 app = Flask(__name__)
 
@@ -43,22 +50,20 @@ class LogsResource(Resource):
     @api.response(200, "Success")
     @api.response(404, "Logs not found")
     def get(self, user_id: int, log_level: str):
-        # TODO validate dates here
         args = parser.parse_args()
 
-        # Build query based on parameters
         query = {"user_id": user_id, "log_level": log_level}
+        start_date = args.get("start_date")
+        end_date = args.get("end_date")
+        self._validate_date_format(start_date)
+        self._validate_date_format(end_date)
 
-        if args["start_date"]:
-            query["date"] = {
-                "$gte": datetime.strptime(args["start_date"], "%Y-%m-%dT%H:%M:%S")
-            }
-        if args["end_date"]:
+        if start_date:
+            query["date"] = {"$gte": datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S")}
+        if end_date:
             if "date" not in query:
                 query["date"] = {}
-            query["date"]["$lte"] = datetime.strptime(
-                args["end_date"], "%Y-%m-%dT%H:%M:%S"
-            )
+            query["date"]["$lte"] = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S")
         if args["keyword"]:
             query["log_message"] = {"$regex": args["keyword"].lower(), "$options": "i"}
 
@@ -72,6 +77,18 @@ class LogsResource(Resource):
                 404, f"Logs could not found for user {user_id} at {log_level} level."
             )
         return logs
+
+    def _validate_date_format(
+        self, date: Optional[str], format: str = "%Y-%m-%dT%H:%M:%S"
+    ):
+        if date is not None:
+            try:
+                datetime.strptime(date, format)
+            except ValueError:
+                api.abort(
+                    400,
+                    f"Could not parse date {date}, pass it in YYYY-MM-DDTHH:MM:SS format",
+                )
 
 
 if __name__ == "__main__":

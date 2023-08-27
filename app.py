@@ -31,27 +31,24 @@ parser.add_argument(
     type=str,
     help="Filter logs with date less than or equal to (YYYY-MM-DDTHH:MM:SS)",
 )
-parser.add_argument("user_id", type=int, help="Filter logs by user ID")
-parser.add_argument(
-    "log_level", type=str, help="Filter logs by log level, case insensitive"
-)
 parser.add_argument(
     "keyword", type=str, help="Filter logs by keyword, case insensitive"
 )
 
 
-@logs_ns.route("/")
+@logs_ns.route("/user/<int:user_id>/level/<string:log_level>")
 class LogsResource(Resource):
     @api.doc(parser=parser)
     @api.marshal_list_with(log_model)
     @api.response(200, "Success")
     @api.response(404, "Logs not found")
-    def get(self):
-        # TODO validate data here
+    def get(self, user_id: int, log_level: str):
+        # TODO validate dates here
         args = parser.parse_args()
 
         # Build query based on parameters
-        query = {}
+        query = {"user_id": user_id, "log_level": log_level}
+
         if args["start_date"]:
             query["date"] = {
                 "$gte": datetime.strptime(args["start_date"], "%Y-%m-%dT%H:%M:%S")
@@ -62,10 +59,6 @@ class LogsResource(Resource):
             query["date"]["$lte"] = datetime.strptime(
                 args["end_date"], "%Y-%m-%dT%H:%M:%S"
             )
-        if args["user_id"]:
-            query["user_id"] = args["user_id"]
-        if args["log_level"]:
-            query["log_level"] = args["log_level"].lower()
         if args["keyword"]:
             query["log_message"] = {"$regex": args["keyword"].lower(), "$options": "i"}
 
@@ -74,8 +67,10 @@ class LogsResource(Resource):
 
         try:
             logs = gateway.get(query)
-        except NoResultsFound as e:
-            logs_ns.abort(404, e)
+        except NoResultsFound:
+            api.abort(
+                404, f"Logs could not found for user {user_id} at {log_level} level."
+            )
         return logs
 
 

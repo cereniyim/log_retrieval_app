@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 from flask import Flask
 from flask_restx import Api, Resource, fields
 
+from log_reader import LogReader
 from mongodb_gateway import MongoDBGateway, NoResultsFound
 
 
@@ -70,6 +72,19 @@ class LogsResource(Resource):
                 400,
                 f"Could not parse date {date}, pass it in YYYY-MM-DD format",
             )
+
+    def _get_archive_logs(
+        self, date: str, user_id: int, log_level: str, keyword: Optional[str] = None
+    ) -> list:
+        log_reader = LogReader()
+        logs = log_reader.read(date, user_id, log_level)
+        if keyword is not None:
+            filtered_logs = []
+            for log in logs:
+                if keyword.lower() in log["log_message"].lower():
+                    filtered_logs.append(log)
+            return filtered_logs
+        return logs
 
 
 if __name__ == "__main__":

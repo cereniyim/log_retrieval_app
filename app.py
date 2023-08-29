@@ -45,9 +45,9 @@ class LogsResource(Resource):
 
         query = {"user_id": user_id, "log_level": log_level, "date": date}
 
-        date = self._validate_date_format(date)
-        query["date"] = {"$gte": date}
-        query["date"]["$lte"] = date + timedelta(days=1)
+        validated_date = self._validate_date_format(date)
+        query["date"] = {"$gte": validated_date}
+        query["date"]["$lte"] = validated_date + timedelta(days=1)
 
         if args["keyword"]:
             query["log_message"] = {"$regex": args["keyword"].lower(), "$options": "i"}
@@ -58,9 +58,12 @@ class LogsResource(Resource):
         try:
             logs = gateway.get(query)
         except NoResultsFound:
-            api.abort(
-                404, f"Logs could not found for user {user_id} at {log_level} level."
-            )
+            logs = self._get_archive_logs(date, user_id, log_level, args["keyword"])
+            if len(logs) == 0:
+                api.abort(
+                    404,
+                    f"Logs could not found for {date} user {user_id} at {log_level} level.",
+                )
         return logs
 
     def _validate_date_format(self, date: str, format: str = "%Y-%m-%d") -> datetime:

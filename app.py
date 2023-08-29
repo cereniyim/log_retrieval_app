@@ -4,6 +4,7 @@ from typing import Optional
 from flask import Flask
 from flask_restx import Api, Resource, fields
 
+from config import MONGODB_URI, MONGODB_NAME, MONGODB_COLLECTION_NAME
 from log_reader import LogReader
 from mongodb_gateway import MongoDBGateway, NoResultsFound
 
@@ -52,8 +53,7 @@ class LogsResource(Resource):
         if args["keyword"]:
             query["log_message"] = {"$regex": args["keyword"].lower(), "$options": "i"}
 
-        gateway = MongoDBGateway("mongodb://mongodb:27017/", "logs", "log_collection")
-        # TODO move them to config
+        gateway = MongoDBGateway(MONGODB_URI, MONGODB_NAME, MONGODB_COLLECTION_NAME)
 
         try:
             logs = gateway.get(query)

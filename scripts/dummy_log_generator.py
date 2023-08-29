@@ -48,8 +48,3 @@ class DummyLogGenerator:
     def _generate_random_word(self):
         random_sentence = "Lorem ipsum dolor sit amet consectetur adipiscing elit Maecenas ullamcorper convallis leo sit amet feugiat ligula viverra eu"
         return random.choice(random_sentence.split())
-
-
-# Initialize and use the DummyLogGenerator class
-# dummy_log_generator = DummyLogGenerator(user_ids, error_metrics)
-# dummy_log_generator.generate()

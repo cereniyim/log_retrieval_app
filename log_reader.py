@@ -3,10 +3,11 @@ import logging
 
 import boto3
 
+from config import S3_BUCKET_NAME
+
 
 class LogReader:
-    def __init__(self, bucket_name: str = "ceren-logs-v1"):
-        # TODO move to config
+    def __init__(self, bucket_name: str = S3_BUCKET_NAME):
         self._bucket_name = bucket_name
         self._s3_client = boto3.client("s3")
 

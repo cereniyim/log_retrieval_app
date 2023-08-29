@@ -3,10 +3,9 @@ from datetime import datetime
 
 from pymongo import MongoClient
 
+from config import MONGODB_NAME, MONGODB_COLLECTION_NAME
 from dummy_log_generator import DummyLogGenerator
 
-
-# TODO move this to scripts
 # MongoDB connection settings
 mongodb_uri = "mongodb://localhost:27017/"
 client = MongoClient(mongodb_uri)

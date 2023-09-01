@@ -27,6 +27,16 @@ class DummyLogGenerator:
         self._log_levels = log_levels or ["info", "error", "debug"]
 
     def generate(self):
+        """
+        Dummy log generator to generate dummy logs an example log looks like
+
+        2023-09-01 12:15:05,306 - DEBUG - User:4 - Validated a new model, eu. User: 4, Recall: 0.2773660126196892
+
+        Returns
+        -------
+            dict of log_level, user_id and message
+
+        """
         log_level = random.choice(self._log_levels)
         user_id = random.choice(self._user_ids)
         error_metric = random.choice(self._error_metrics)

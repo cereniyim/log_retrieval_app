@@ -11,7 +11,19 @@ class MongoDBGateway:
         self._db = self._client[db_name]
         self._collection = self._db[collection_name]
 
-    def get(self, query: dict) -> list:
+    def get(self, query: dict) -> list[dict]:
+        """
+
+        Parameters
+        ----------
+        query: dict
+            Query parameters
+
+        Returns
+        -------
+            NoResultsFound: if documents are not found for the specified query
+
+        """
         result = list(self._collection.find(query))
         if not result:
             raise NoResultsFound("Documents are not found for the specified criteria.")

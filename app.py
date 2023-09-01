@@ -41,7 +41,12 @@ class LogsResource(Resource):
     @api.marshal_list_with(log_model)
     @api.response(200, "Success")
     @api.response(404, "Logs not found")
-    def get(self, date: str, user_id: int, log_level: str):
+    @api.response(400, "Bad Request")
+    def get(self, date: str, user_id: int, log_level: str) -> Optional[list[dict]]:
+        """
+        GET endpoint to retrieve logs either from DB or from S3
+
+        """
         args = parser.parse_args()
 
         query = {"user_id": user_id, "log_level": log_level, "date": date}

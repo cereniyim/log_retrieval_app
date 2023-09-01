@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from mongodb_gateway import MongoDBGateway
@@ -10,9 +12,7 @@ def test_mongodb_gateway_get():
         db_name="logs",
         collection_name="log_collection",
     )
-    query = {
-        "user_id": 4,
-    }
+    query = {"user_id": 4, "log_level": "info", "date": {"$gte": datetime(2023, 9, 1)}}
     res = gateway.get(query)
 
     assert len(res) > 0

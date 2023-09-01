@@ -83,6 +83,11 @@ Lorem ipsum dolor sit amet consectetur adipiscing elit Maecenas ullamcorper conv
 ### To access logs from cold storage 
 Currently only logs between 2023-08-27 and 2023-08-28 at `error` level logs are stored. So please query for those dates only.
 
+To stop the app
+```
+docker-compose down -v
+```
+
 ## Further Improvement Areas
 - Support cluster deployment so that the app runs in any environment.
 - Automate archiving documents older than 1 day to s3 in `export_logs.sh`.

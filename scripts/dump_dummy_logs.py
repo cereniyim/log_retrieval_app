@@ -3,7 +3,6 @@ from datetime import datetime
 
 from pymongo import MongoClient
 
-from config import MONGODB_NAME, MONGODB_COLLECTION_NAME
 from dummy_log_generator import DummyLogGenerator
 
 # MongoDB connection settings

@@ -18,7 +18,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      # logs_app_user access keys
+      # replace with logs_app_user access keys
       - AWS_ACCESS_KEY_ID=<replace-me>
       - AWS_SECRET_ACCESS_KEY=<replace-me>
     networks:

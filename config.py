@@ -1,4 +1,3 @@
-
 MONGODB_URI = "mongodb://mongodb:27017/"
 MONGODB_NAME = "logs"
 MONGODB_COLLECTION_NAME = "log_collection"

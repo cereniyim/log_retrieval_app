@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Black">
-    <option name="enabledOnReformat" value="true" />
-    <option name="sdkUUID" value="cc9dde14-2219-4416-ac36-a02185e69c1d" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (log_retrieval_app)" project-jdk-type="Python SDK" />
-</project>

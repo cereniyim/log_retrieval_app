@@ -44,14 +44,14 @@ class LogsResource(Resource):
     @api.response(400, "Bad Request")
     def get(self, date: str, user_id: int, log_level: str) -> Optional[list[dict]]:
         """
-        GET endpoint to retrieve logs either from DB or from S3
+        GET endpoint to retrieve logs
 
         """
         args = parser.parse_args()
-
-        query = {"user_id": user_id, "log_level": log_level, "date": date}
-
         validated_date = self._validate_date_format(date)
+
+        query = {"user_id": user_id, "log_level": log_level}
+
         query["date"] = {"$gte": validated_date}
         query["date"]["$lte"] = validated_date + timedelta(days=1)
 
@@ -63,7 +63,12 @@ class LogsResource(Resource):
         try:
             logs = gateway.get(query)
         except NoResultsFound:
-            logs = self._get_archive_logs(date, user_id, log_level, args["keyword"])
+            logs = self._get_archive_logs(
+                datetime.strftime(validated_date, "%Y-%m-%d"),
+                user_id,
+                log_level,
+                args["keyword"],
+            )
             if len(logs) == 0:
                 api.abort(
                     404,
